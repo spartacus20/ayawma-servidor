@@ -1,7 +1,7 @@
 import express from "express";
 import session from "express-session";
 import cors from "cors";
-import { conn } from "./mysql_conector.js";
+import { RegisterUser, conector, conn } from "./mysql_conector.js";
 import bodyParser from "body-parser";
 
 const app = express();
@@ -26,15 +26,26 @@ app.use(
   })
 );
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
 //save name as cookie
-app.post("/register", async (req, res) => {
+app.post("/users/register", async (req, res) => {
   try {
-    const name = req.body.username; 
+    //getting variables from body of the request.
+    const name = req.body.username;
     const email = req.body.email;
-    console.log(email)
-  } catch (error) {
-    console.log(error);
+    const password = req.body.password;
+    const googleToken = req.body.googleToken;
+
+    if (password == undefined) {
+      //check if is a google registration.
+      RegisterUser(name, email, "NULL", googleToken, res);
+    }
+    RegisterUser(name, email, password, googleToken, res);
+
+
+  } catch (e) {
+    console.log(e);
   }
 });
 
@@ -49,5 +60,6 @@ app.get("/users/login", async (req, res) => {
 });
 
 app.listen(3001, () => {
+  conn(); 
   console.log("Server is running on port 3001! Everything is working");
 });
