@@ -1,15 +1,18 @@
 import jwt from "jsonwebtoken";
-export const getAuthorization = (request, response) => {
+import "dotenv/config"
+
+const getDecodedToken = (request, response) => {
     
-    const authorization = request.get('Authorization'); 
-    const token = null; 
-    if(authorization && authorization.toLocaleLowerCase().startsWith("bearer")){
-        token = authorization.substring(7);
-    }
-    const decodeToken = jwt.verify(token, "12333") // TODO: change token verifier. 
-    if(!token || !decodeToken) {
-        return response.status(401).json{
-            error: "token missing or  invalid"
-        }
-    }
+    const authorization = request.get('Authorization');
+    let token = ""
+  
+    if (authorization && authorization.toLocaleLowerCase().startsWith("bearer")) {
+      token = authorization.substring(7)
+   |}
+    const decodeToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
+
+    return decodeToken;
+    
 }
+
+export {getDecodedToken}
