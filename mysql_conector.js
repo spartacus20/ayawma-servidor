@@ -11,12 +11,12 @@ const conector = mysql.createConnection({
 
 const conn = () => {
   conector.connect((err) => {
-    if (err) throw err;
+    if (err) throw err ;
     console.log("Database has been connected");
   });
 };
 
-const RegisterUser = (userName, email, password, googleToken, res) => {
+const RegisterUser = (userName, email, password, googleToken, res, accessToken, refreshToken) => {
   //CHECK IF  USER HAS ALEREADY REGISTERED.
 
   var CHECKUSER = "SELECT * FROM users WHERE email = '" + email + "'";
@@ -25,11 +25,22 @@ const RegisterUser = (userName, email, password, googleToken, res) => {
     if (rows.length > 0) {
       return res.status(400).send({ msg: "USER ALEREADY REGISTERED" });
     }
+    
+    
     var QUERY =
       "INSERT INTO users (name, email, password, token) VALUES (?, ?, ?, ?)";
 
     conector.query(QUERY, [userName, email, password, googleToken], (error) => {
       if (error) throw error;
+      
+      res.status(200).send({
+        message: "Success",
+        username: userName,
+        email: email,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+
+      });         
     });
   });
 };
@@ -40,23 +51,26 @@ const getDecodedToken = (request, response) => {
   if (authorization && authorization.toLocaleLowerCase().startsWith("bearer")) {
     token = authorization.substring(7);
   }
-  console.log(token);
-  let decodeToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+  let decodeToken = {}; 
+  try { 
+    decodeToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+  }catch{}
+  
   return decodeToken;
 };
 
 //TODO: Validate refreshToken and send user information to the client.
 const getUser = (request, response) => {
   const decodedToken = getDecodedToken(request, response);
-  if (decodedToken == undefined) {
-    response.status(401).send({ error: "Token missing or invalid" });
-  } else {
-    response.send({
-      decodedToken,
-    });
-  }
+  let i = 1
+  console.log("Entre aqui: "+i++)
+  response.send({
+    decodedToken,
+  });
+
+  }; 
 
   //const QUERY = "SELECT * FROM users where email="
-};
+
 
 export { conector, RegisterUser, conn, getUser };
