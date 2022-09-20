@@ -1,12 +1,15 @@
 import "dotenv/config";
-import express, { request, response } from "express";
-import { handleError } from "./middleware/handleErrors.js";
-import cors from "cors";
 import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
+import cors from "cors";
+import express from "express";
 import jwt from "jsonwebtoken";
+import { config } from "dotenv";
+import { handleError } from "./middleware/handleErrors.js";
+import { RegisterUser, LoginUser, conn, getUser } from "./mysql_conector.js";
 
-import { RegisterUser, conector, conn, getUser } from "./mysql_conector.js";
+
+
 const app = express();
 const port = process.env.PORT || 3001;
 //Cors policy settings.
@@ -40,10 +43,7 @@ app.post("/users/register", async (req, res) => {
       };
       
       const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_SECRET);
-      const refreshToken = jwt.sign(
-        userForToken,
-        process.env.REFRESH_TOKEN_SECRET
-        );
+      const refreshToken = jwt.sign(userForToken,process.env.REFRESH_TOKEN_SECRET);
         
         let passwordHash = undefined;
         //check if is a google registration.
@@ -67,8 +67,27 @@ app.post("/users/register", async (req, res) => {
       
       //El servidor tiene que enviarle el access token al usuario.
 //El  servidor web crea una refresh token y la manda al servidor.
-//El servidor le responde con la access token.
+//El servidor le cd responde con la access token.
 
+
+
+app.post("/users/login", async (req, res) => 
+{
+  
+  const { body } = req;
+  const name = body.username;
+  const email = body.email;
+  const password = body.password;
+  const userForToken = {
+    email: email, 
+  }
+  console.log(req.body)
+  const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_SECRET);
+  const refreshToken = jwt.sign(userForToken,process.env.REFRESH_TOKEN_SECRET);
+  let passwordhash= await bcrypt.hash(password, 10)
+  LoginUser(email, password, res, accessToken, refreshToken); 
+
+})
 
 app.get("/api/user",  (req, res) => {
   getUser(req, res);
@@ -76,9 +95,9 @@ app.get("/api/user",  (req, res) => {
 
 
 
-app.use((err, req, res, next) => {
-  handleError(err, req, res, next);
-});
+// app.use((err, req, res, next) => {
+//   handleError(err, req, res, next);
+// });
 
 app.listen(port, () => {
   conn();
