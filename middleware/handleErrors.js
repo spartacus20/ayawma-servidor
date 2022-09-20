@@ -5,7 +5,8 @@ const ERROR_HANDLERS = {
 
     ValidationsError: (res,err) => 
         res.status(409).send({error: err.message}),
-        
+    JsonWebTokenError: (res,err) => 
+         res.status(401).send({error: "Token missing or invalid"}),
     ReferenceError: (res) => 
         res.status(409).send({error: "Someting wrong  with reference."}),
 

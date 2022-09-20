@@ -48,10 +48,11 @@ app.post("/users/register", async (req, res) => {
         let passwordHash = undefined;
         //check if is a google registration.
         if (password == undefined) {
-          RegisterUser(name, email, "NULL", googleToken, res, accessToken, refreshToken);
+          RegisterUser(name, email, "NULL",  res, accessToken, refreshToken);
         }else {
           passwordHash = await bcrypt.hash(password, 10);
-          RegisterUser(name, email, passwordHash, "NULL", res, accessToken, refreshToken)
+          
+          RegisterUser(name, email, passwordHash,  res, accessToken, refreshToken)
         }
 
         // res.status(200).send({
@@ -78,26 +79,21 @@ app.post("/users/login", async (req, res) =>
   const name = body.username;
   const email = body.email;
   const password = body.password;
-  const userForToken = {
-    email: email, 
-  }
-  console.log(req.body)
-  const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_SECRET);
-  const refreshToken = jwt.sign(userForToken,process.env.REFRESH_TOKEN_SECRET);
-  let passwordhash= await bcrypt.hash(password, 10)
-  LoginUser(email, password, res, accessToken, refreshToken); 
+  console.log(password)
+
+  LoginUser(email, password, res, name); 
 
 })
 
 app.get("/api/user",  (req, res) => {
-  getUser(req, res);
+ getUser(req, res);
 });
 
 
 
-// app.use((err, req, res, next) => {
-//   handleError(err, req, res, next);
-// });
+app.use((err, req, res, next) => {
+  handleError(err, req, res, next);
+});
 
 app.listen(port, () => {
   conn();

@@ -17,21 +17,24 @@ const conn = () => {
   });
 };
 
-const RegisterUser = (userName, email, password, googleToken, res, accessToken, refreshToken) => {
+const RegisterUser = (userName, email, password, res, accessToken, refreshToken) => {
   //CHECK IF  USER HAS ALEREADY REGISTERED.
 
+ 
   var CHECKUSER = "SELECT * FROM users WHERE email = '" + email + "'";
   conector.query(CHECKUSER, (err, rows) => {
     if (err) throw err;
-    if (rows.length > 0) {
-      return res.status(400).send({ msg: "USER ALEREADY REGISTERED" });
+ 
+    if(password) {
+      if (rows.length > 0) {
+        return res.status(400).send({ msg: "USER ALEREADY REGISTERED" });
+      }
     }
     
-    
-    var QUERY =
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    console.log("Valor de password: "+password);
+    var QUERY = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
 
-    conector.query(QUERY, [userName, email, password, googleToken], (error) => {
+    conector.query(QUERY, [userName, email, password], (error) => {
       if (error) throw error;
       
       res.status(200).send({
@@ -46,45 +49,64 @@ const RegisterUser = (userName, email, password, googleToken, res, accessToken, 
   });
 };
 
-const LoginUser = (email, password, res, accessToken, refreshToken) => {
-
-  //CHECK IF EMAIL EXITS. GOOGLE LOGIN. 
-  if(password == undefined){
-    var CHECKEMAIL = "SELECT * FROM users WHERE email = '" + email + "'";
-    conector.query(CHECKEMAIL, (err, rows) =>{
-      if(err) throw err;
-      if(rows.length > 0) {res.status(200).send({msg: "Success", accessToken: accessToken, refreshToken: refreshToken});}else{ 
-        RegisterUser(name, email, password, res, accessToken, refreshToken);
-      }
-
-    })
-    //CHECK IF EMAIL AND PASSWORD EXITS.
-  }else{ 
-
+const LoginUser = (email, password, res, name) => {
 
     var CHECK  = "SELECT * FROM users WHERE email = '" + email + "'";
-
-
-
     conector.query(CHECK, async (err, rows) =>{
       if (err) throw err;
-      if(rows.length > 0) {
-        // res.status(200).send({msg: "Success", accessToken: accessToken, refreshToken: refreshToke});
-        let passwordHash = JSON.parse(JSON.stringify(rows));
-        passwordHash = passwordHash[0].password
-        console.log(passwordHash)
-       let pass = bcrypt.compare(password, passwordHash).then(response => {
-        res.status(201).send({msg: "Success", accessToken: accessToken, refreshToken: refreshToken});
-       }).catch(err => {
-        res.status(401).send({msg: "Email or password invalid"})  
-      })
-        console.log(pass)
+      let accessToken = {}
+      let refreshToken = {}
+      const data = JSON.parse(JSON.stringify(rows));
+      console.log(rows.length)
+    //WHEN THE USER USE GOOGLE AUTENTIFICATION
+    if(password == undefined ){
+     //WHEN THE USER USE GOOGLE AUTENTIFICATION AND HAVE AN ACCOUNT.       
+      if(rows.length > 0){
+        const Tokeninfo = {
+          username: data[0].name,
+          email: email
+        }
+        accessToken = jwt.sign(Tokeninfo, process.env.ACCESS_TOKEN_SECRET);
+        refreshToken = jwt.sign(Tokeninfo,process.env.REFRESH_TOKEN_SECRET);
+        res.status(200).send({msg: "Success", accessToken: accessToken, refreshToken: refreshToken});
+        
 
-      }else{
-        res.status(401).send({msg :"Someting wrong with the email or password"})
+      }else{ 
+        
+        const UserRegisterToken = {
+          username: name, 
+          email: email, 
+        }
+       // WHEN THE USER DONT HAVE ACCOUNT AND  USE GOOGLE AUTENTIFICATION
+        accessToken = jwt.sign(UserRegisterToken, process.env.ACCESS_TOKEN_SECRET);
+        refreshToken = jwt.sign(UserRegisterToken,process.env.REFRESH_TOKEN_SECRET)
+        RegisterUser(name, email, "NULL", res, accessToken, refreshToken)
       }
-    })
-  }
+       
+    }else{
+      
+      //EVERYTHIN IS OK. 
+      if(rows.length > 0){
+        const Tokeninfo = {
+          username: data[0].name,
+          email: email
+        }
+        accessToken = jwt.sign(Tokeninfo, process.env.ACCESS_TOKEN_SECRET);
+        refreshToken = jwt.sign(Tokeninfo,process.env.REFRESH_TOKEN_SECRET);
+        let  passwordHash = data[0].password
+        let pass = bcrypt.compare(password, passwordHash).then(response => {
+        res.status(201).send({msg: "Success", accessToken: accessToken, refreshToken: refreshToken});
+        }).catch(err => {res.status(401).send({msg: "Email or password invalid"})})
+
+      }else{ 
+        res.status(401).send({msg: "Email or password invalid"}) 
+      }
+      }
+    }); 
+
+
+
+  
 }
 
 
@@ -95,21 +117,21 @@ const getDecodedToken = (request, response) => {
     token = authorization.substring(7);
   }
   let decodeToken = {}; 
-  try { 
-    decodeToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-  }catch{}
-  
+
+  decodeToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
   return decodeToken;
 };
 
 //TODO: Validate refreshToken and send user information to the client.
 const getUser = (request, response) => {
   const decodedToken = getDecodedToken(request, response);
-  let i = 1
-  console.log("Entre aqui: "+i++)
-  response.send({
-    decodedToken,
-  });
+ 
+    response.send({
+      decodedToken,
+    });
+  
+  
 
   }; 
 
