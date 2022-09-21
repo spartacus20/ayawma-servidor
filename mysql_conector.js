@@ -57,7 +57,7 @@ const LoginUser = (email, password, res, name) => {
       let accessToken = {}
       let refreshToken = {}
       const data = JSON.parse(JSON.stringify(rows));
-      console.log(rows.length)
+      //console.log(rows.length)
     //WHEN THE USER USE GOOGLE AUTENTIFICATION
     if(password == undefined ){
      //WHEN THE USER USE GOOGLE AUTENTIFICATION AND HAVE AN ACCOUNT.       
@@ -123,6 +123,20 @@ const getDecodedToken = (request, response) => {
   return decodeToken;
 };
 
+const getProduct = (product, res) => { 
+  const QUERY = "SELECT * FROM products WHERE name = ?"
+ 
+  
+  conector.query(QUERY,[product], (err, rows) => {
+    if(err) throw err; 
+ 
+    const data = JSON.parse(JSON.stringify(rows));
+    console.log(data)
+    res.status(201).send({data})
+
+  })
+}
+
 //TODO: Validate refreshToken and send user information to the client.
 const getUser = (request, response) => {
   const decodedToken = getDecodedToken(request, response);
@@ -138,4 +152,4 @@ const getUser = (request, response) => {
   //const QUERY = "SELECT * FROM users where email="
 
 
-export { conector, RegisterUser, conn, getUser, LoginUser };
+export { conector, RegisterUser, conn, getUser, LoginUser, getProduct };
