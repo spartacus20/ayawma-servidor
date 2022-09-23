@@ -123,17 +123,32 @@ const getDecodedToken = (request, response) => {
   return decodeToken;
 };
 
+
+const getProductInformation = (product, res) => {
+   const QUERY = "SELECT * from products WHERE name='"+product+"'"
+
+   conector.query(QUERY, (err, rows) => {
+     if (err) throw err;
+     const data = JSON.parse(JSON.stringify(rows));
+    
+     if(rows.length < 1){
+         res.status(404).send({msg: "No product found"})
+    }else{
+        res.status(201).send({data})
+     }
+
+   })
+}
+
+
 const getProduct = (product, res) => { 
-  const QUERY = "SELECT * FROM products WHERE name = ?"
+  const QUERY = "SELECT * FROM products WHERE name LIKE '%"+product+"%' OR description LIKE '%"+product+"%'"
  
-  
-  conector.query(QUERY,[product], (err, rows) => {
+  conector.query(QUERY,(err, rows) => {
     if(err) throw err; 
  
     const data = JSON.parse(JSON.stringify(rows));
-    console.log(data)
     res.status(201).send({data})
-
   })
 }
 
@@ -152,4 +167,4 @@ const getUser = (request, response) => {
   //const QUERY = "SELECT * FROM users where email="
 
 
-export { conector, RegisterUser, conn, getUser, LoginUser, getProduct };
+export { conector, RegisterUser, conn, getUser, LoginUser, getProduct, getProductInformation};

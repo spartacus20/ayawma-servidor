@@ -6,12 +6,14 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import { handleError } from "./middleware/handleErrors.js";
-import { RegisterUser, LoginUser, conn, getUser, getProduct } from "./mysql_conector.js";
+import { RegisterUser, LoginUser, conn, getUser, getProduct, getProductInformation } from "./mysql_conector.js";
 
 
 
 const app = express();
+
 const port = process.env.PORT || 3001;
+
 //Cors policy settings.
 app.use(
   cors({
@@ -85,16 +87,23 @@ app.post("/users/login", async (req, res) =>
 
 })
 
+app.get("/api/product/:product/info", async (req, res) => {
+
+  let product = req.params.product;
+  getProductInformation(product, res)
+
+})
+
+
 app.get("/api/product/:producto", async (req, res) => {
 
   
 
-  let producto = req.params.producto;
+  let product = req.params.producto;
 
-  getProduct(producto, res)
+  getProduct(product, res)
 
 })
-
 
 app.get("/api/user",  (req, res) => {
  getUser(req, res);
