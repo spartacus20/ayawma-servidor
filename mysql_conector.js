@@ -2,6 +2,7 @@ import mysql from "mysql";
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { response } from "express";
 
 const conector = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -141,6 +142,28 @@ const getProductInformation = (product, res) => {
 }
 
 
+
+const getDiscount = (res, code) => {
+  
+  const QUERY = "SELECT * FROM discount WHERE Code='"+code+"'"
+
+  conector.query(QUERY, (err, rows) => {
+    if (err) res.status(err).status(400).send({msg: "Something went wrong"}); 
+    
+    if(rows.length > 0){ 
+      const data = JSON.parse(JSON.stringify(rows));
+      res.status(201).send({data})
+    }else{
+       res.status(400).send({msg: "Discount code is not valid"});
+    }
+ 
+  })
+
+
+}
+
+
+
 const getProduct = (product, res) => { 
   const QUERY = "SELECT * FROM products WHERE name LIKE '%"+product+"%' OR description LIKE '%"+product+"%'"
  
@@ -167,4 +190,4 @@ const getUser = (request, response) => {
   //const QUERY = "SELECT * FROM users where email="
 
 
-export { conector, RegisterUser, conn, getUser, LoginUser, getProduct, getProductInformation};
+export { conector, RegisterUser, conn, getUser, LoginUser, getProduct, getProductInformation, getDiscount};

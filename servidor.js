@@ -6,7 +6,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import { handleError } from "./middleware/handleErrors.js";
-import { RegisterUser, LoginUser, conn, getUser, getProduct, getProductInformation } from "./mysql_conector.js";
+import { RegisterUser, LoginUser, conn, getUser, getProduct, getProductInformation, getDiscount } from "./mysql_conector.js";
 
 
 
@@ -109,6 +109,15 @@ app.get("/api/user",  (req, res) => {
  getUser(req, res);
 });
 
+app.post("/api/discount", (req, res) => {
+  
+  const { body } = req;
+  const discount = body.discount;
+  
+  getDiscount(res, discount); 
+
+})
+   
 
 
 app.use((err, req, res, next) => {
