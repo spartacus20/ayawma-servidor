@@ -5,9 +5,16 @@ import cors from "cors";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
+import path from "path";
+import { fileURLToPath } from 'url';
+
 import { handleError } from "./middleware/handleErrors.js";
 import { RegisterUser, LoginUser, conn, getUser, getProduct, getProductInformation, getDiscount } from "./mysql_conector.js";
 
+
+/* Getting the path of the file. */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 const app = express();
@@ -27,7 +34,7 @@ app.use(bodyParser.json());
 
 
 
-//Save the name as a cookie
+
 app.post("/users/register", async (req, res) => {
     try{
 
@@ -56,21 +63,9 @@ app.post("/users/register", async (req, res) => {
           
           RegisterUser(name, email, passwordHash,  res, accessToken, refreshToken)
         }
-
-        // res.status(200).send({
-        //   message: "Success",
-        //   username: name,
-        //   email: email,
-        //   accessToken: accessToken,
-        //   refreshToken: refreshToken,
-        // });
       }catch(e){console.log(e);}
         
       });
-      
-      //El servidor tiene que enviarle el access token al usuario.
-//El  servidor web crea una refresh token y la manda al servidor.
-//El servidor le cd responde con la access token.
 
 
 
@@ -113,18 +108,25 @@ app.post("/api/discount", (req, res) => {
   
   const { body } = req;
   const discount = body.discount;
-  
+
   getDiscount(res, discount); 
 
 })
-   
 
-
+/* Sending the image to the client. */
+app.get("/images/:img",  (req, res) => {
+   let img = req.params.img;
+   res.sendFile(path.join(__dirname+`/images/${img}`))
+  });
+ 
+/* A middleware that is handling the errors. */
 app.use((err, req, res, next) => {
   handleError(err, req, res, next);
 });
 
 app.listen(port, () => {
   conn();
+ /* Serving the static files in the public folder. */
+  express.static(path.join(__dirname, "./public"))
   console.log("Server is running on port " + port + "\n Everything is working");
 });

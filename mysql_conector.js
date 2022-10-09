@@ -126,7 +126,7 @@ const getDecodedToken = (request, response) => {
 
 
 const getProductInformation = (product, res) => {
-   const QUERY = "SELECT * from products WHERE name='"+product+"'"
+   const QUERY = "SELECT * from products WHERE title='"+product+"'"
 
    conector.query(QUERY, (err, rows) => {
      if (err) throw err;
@@ -145,7 +145,7 @@ const getProductInformation = (product, res) => {
 
 const getDiscount = (res, code) => {
   
-  const QUERY = "SELECT * FROM discount WHERE Code='"+code+"'"
+  const QUERY = "SELECT * FROM discount WHERE code='"+code+"'"
 
   conector.query(QUERY, (err, rows) => {
     if (err) res.status(err).status(400).send({msg: "Something went wrong"}); 
@@ -165,7 +165,7 @@ const getDiscount = (res, code) => {
 
 
 const getProduct = (product, res) => { 
-  const QUERY = "SELECT * FROM products WHERE name LIKE '%"+product+"%' OR description LIKE '%"+product+"%'"
+  const QUERY = "SELECT * FROM products WHERE title LIKE '%"+product+"%' OR description LIKE '%"+product+"%'"
  
   conector.query(QUERY,(err, rows) => {
     if(err) throw err; 
