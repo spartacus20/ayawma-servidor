@@ -9,6 +9,27 @@ const CLIENT_URL = process.env.CLIENT_URL;
 
 
 router.post('/create-checkout-session', async (req, res) => {
+  
+  
+  const line_items = req.body.basket?.map((item) => {
+    return {
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: item.title,
+         // images: [item.image],
+         
+          metadata: {
+            id: item.id,
+          },
+        },
+        unit_amount: item.price * 100,
+      },
+      quantity: item.quantity,
+    };
+  });
+  
+  
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     shipping_address_collection: {
@@ -58,18 +79,7 @@ router.post('/create-checkout-session', async (req, res) => {
         }
       },
     ],
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'T-shirt',
-          },
-          unit_amount: 2000,
-        },
-        quantity: 1,
-      },
-    ],
+    line_items,
     mode: 'payment',
     success_url: CLIENT_URL,
     cancel_url: CLIENT_URL,
