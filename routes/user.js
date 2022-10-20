@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { request } from 'express';
 import { getUser } from "../mysql_conector.js";
 
 const router = express.Router();

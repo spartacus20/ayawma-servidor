@@ -11,7 +11,6 @@ router.post("/users/login", async (req, res) =>
   const name = body.username;
   const email = body.email;
   const password = body.password;
-  console.log(password)
 
   LoginUser(email, password, res, name); 
 

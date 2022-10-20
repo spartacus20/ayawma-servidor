@@ -1,8 +1,5 @@
-POST http://localhost:3001/api/discount
-content-type: application/json
+GET  http://localhost:3001/api/user
+Authorization: Bearer ''
 
-{
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNjY2Mjg4Njk1fQ.ALjip0vTJk7O2zI2-sdu0RYQsIbcR1GzCMvp8x0tYeo
 
-    "discount": "jorge"
-
-}

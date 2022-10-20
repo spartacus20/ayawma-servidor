@@ -51,7 +51,6 @@ const RegisterUser = (userName, email, password, res, accessToken, refreshToken)
 };
 
 const LoginUser = (email, password, res, name) => {
-
     var CHECK  = "SELECT * FROM users WHERE email = '" + email + "'";
     conector.query(CHECK, async (err, rows) =>{
       if (err) throw err;
@@ -59,13 +58,13 @@ const LoginUser = (email, password, res, name) => {
       let refreshToken = {}
       const data = JSON.parse(JSON.stringify(rows));
       //console.log(rows.length)
-    //WHEN THE USER USE GOOGLE AUTENTIFICATION
+      //WHEN THE USER USE GOOGLE AUTENTIFICATION
     if(password == undefined ){
      //WHEN THE USER USE GOOGLE AUTENTIFICATION AND HAVE AN ACCOUNT.       
       if(rows.length > 0){
+    
         const Tokeninfo = {
-          username: data[0].name,
-          email: email
+          id: data[0].id,
         }
         accessToken = jwt.sign(Tokeninfo, process.env.ACCESS_TOKEN_SECRET);
         refreshToken = jwt.sign(Tokeninfo,process.env.REFRESH_TOKEN_SECRET);
@@ -75,8 +74,7 @@ const LoginUser = (email, password, res, name) => {
       }else{ 
         
         const UserRegisterToken = {
-          username: name, 
-          email: email, 
+          id: data[0].id,
         }
        // WHEN THE USER DONT HAVE ACCOUNT AND  USE GOOGLE AUTENTIFICATION
         accessToken = jwt.sign(UserRegisterToken, process.env.ACCESS_TOKEN_SECRET);
@@ -89,8 +87,7 @@ const LoginUser = (email, password, res, name) => {
       //EVERYTHIN IS OK. 
       if(rows.length > 0){
         const Tokeninfo = {
-          username: data[0].name,
-          email: email
+          id: data[0].id,
         }
         accessToken = jwt.sign(Tokeninfo, process.env.ACCESS_TOKEN_SECRET);
         refreshToken = jwt.sign(Tokeninfo,process.env.REFRESH_TOKEN_SECRET);
@@ -111,8 +108,8 @@ const LoginUser = (email, password, res, name) => {
 }
 
 
-const getDecodedToken = (request, response) => {
-  const authorization = request.get("Authorization");
+const getDecodedToken = (req) => {
+  const authorization = req.get('Authorization');
   let token = "";
   if (authorization && authorization.toLocaleLowerCase().startsWith("bearer")) {
     token = authorization.substring(7);
@@ -177,12 +174,16 @@ const getProduct = (product, res) => {
 
 //TODO: Validate refreshToken and send user information to the client.
 const getUser = (request, response) => {
-  const decodedToken = getDecodedToken(request, response);
- 
-    response.send({
-      decodedToken,
-    });
   
+  const decodedToken = getDecodedToken(request);
+  const QUERY = "SELECT name,email FROM users WHERE id = "+decodedToken.id+""
+  conector.query(QUERY,(err, rows) => {
+    if(err) throw err;
+    const data = JSON.parse(JSON.stringify(rows));
+    response.status(200).send({data})
+  })
+  
+
   
 
   }; 
