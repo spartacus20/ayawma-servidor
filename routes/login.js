@@ -1,6 +1,6 @@
-import "dotenv/config";
-import express from 'express';
-import { LoginUser } from "../mysql_conector.js";
+require("dotenv").config();
+const express = require("express");
+const  { LoginUser } = require("../mysql_conector.js");
 
 const router = express.Router();
 
@@ -16,4 +16,4 @@ router.post("/users/login", async (req, res) =>
 
 })
 
-export default router; 
+module.exports = router;

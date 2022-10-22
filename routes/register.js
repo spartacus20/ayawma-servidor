@@ -1,9 +1,9 @@
-import "dotenv/config";
-import express from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from "bcrypt";
-import { RegisterUser } from "../mysql_conector.js";
-
+const mysql = require("mysql");
+require("dotenv").config();
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { RegisterUser } = require("../mysql_conector.js");
+const express = require("express");
 const router = express.Router();
 
 /* A post request that is handling the registration of the user. */
@@ -39,6 +39,6 @@ router.post("/users/register", async (req, res) => {
       });
       
       
-export default router;
 
 
+module.exports = router;

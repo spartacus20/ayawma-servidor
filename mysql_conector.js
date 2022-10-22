@@ -1,8 +1,7 @@
-import mysql from "mysql";
-import "dotenv/config";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { response } from "express";
+const mysql = require("mysql");
+require("dotenv").config();
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const conector = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -11,14 +10,14 @@ const conector = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
-const conn = () => {
+function conn () {
   conector.connect((err) => {
     if (err) throw err ;
     console.log("Database has been connected");
   });
 };
 
-const RegisterUser = (userName, email, password, res, accessToken, refreshToken) => {
+function RegisterUser (userName, email, password, res, accessToken, refreshToken) {
   //CHECK IF  USER HAS ALEREADY REGISTERED.
 
  
@@ -50,7 +49,7 @@ const RegisterUser = (userName, email, password, res, accessToken, refreshToken)
   });
 };
 
-const LoginUser = (email, password, res, name) => {
+function LoginUser (email, password, res, name) {
     var CHECK  = "SELECT * FROM users WHERE email = '" + email + "'";
     conector.query(CHECK, async (err, rows) =>{
       if (err) throw err;
@@ -108,7 +107,7 @@ const LoginUser = (email, password, res, name) => {
 }
 
 
-const getDecodedToken = (req) => {
+function getDecodedToken (req)  {
   const authorization = req.get('Authorization');
   let token = "";
   if (authorization && authorization.toLocaleLowerCase().startsWith("bearer")) {
@@ -122,7 +121,7 @@ const getDecodedToken = (req) => {
 };
 
 
-const getProductInformation = (product, res) => {
+function getProductInformation (product, res) {
    const QUERY = "SELECT * from products WHERE title='"+product+"'"
 
    conector.query(QUERY, (err, rows) => {
@@ -140,7 +139,7 @@ const getProductInformation = (product, res) => {
 
 
 
-const getDiscount = (res, code) => {
+function getDiscount  (res, code) {
   
   const QUERY = "SELECT * FROM discount WHERE code='"+code+"'"
 
@@ -161,7 +160,7 @@ const getDiscount = (res, code) => {
 
 
 
-const getProduct = (product, res) => { 
+function getProduct  (product, res)  { 
   const QUERY = "SELECT * FROM products WHERE title LIKE '%"+product+"%' OR description LIKE '%"+product+"%'"
  
   conector.query(QUERY,(err, rows) => {
@@ -173,7 +172,7 @@ const getProduct = (product, res) => {
 }
 
 //TODO: Validate refreshToken and send user information to the client.
-const getUser = (request, response) => {
+function getUser  (request, response)  {
   
   const decodedToken = getDecodedToken(request);
   const QUERY = "SELECT name,email FROM users WHERE id = "+decodedToken.id+""
@@ -191,4 +190,5 @@ const getUser = (request, response) => {
   //const QUERY = "SELECT * FROM users where email="
 
 
-export { conector, RegisterUser, conn, getUser, LoginUser, getProduct, getProductInformation, getDiscount};
+module.exports = { LoginUser, getUser, RegisterUser, conn, getDecodedToken, getProduct, getProductInformation };
+
