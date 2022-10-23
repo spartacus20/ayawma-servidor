@@ -190,5 +190,5 @@ function getUser  (request, response)  {
   //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = { LoginUser, getUser, RegisterUser, conn, getDecodedToken, getProduct, getProductInformation };
+module.exports = { LoginUser, getUser, RegisterUser, conn, getDecodedToken, getProduct, getProductInformation, conector };
 

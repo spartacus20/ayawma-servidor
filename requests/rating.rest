@@ -1,0 +1,11 @@
+POST http://localhost:3001/new-rating
+content-type: application/json
+
+{
+    "productID": 2,
+    "userID": 2,
+    "comment": {
+        "comment": "To gucci pah",
+        "rating": 5
+    }
+}

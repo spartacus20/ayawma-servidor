@@ -18,3 +18,4 @@ const handleError = (err, req, res, next) => {
     handler(res, err)
 }
 
+module.exports = handleError;
