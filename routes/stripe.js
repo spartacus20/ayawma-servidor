@@ -1,6 +1,7 @@
-import "dotenv/config"; 
-import express from 'express';
-import Stripe from "stripe";
+const express = require("express");
+const { restart } = require("nodemon");
+const Stripe = require('stripe');
+require('dotenv').config(); 
 
 
 const router = express.Router();
@@ -11,7 +12,9 @@ const CLIENT_URL = process.env.CLIENT_URL;
 router.post('/create-checkout-session', async (req, res) => {
   
   
-  const line_items = req.body.basket?.map((item) => {
+
+  
+  const line_items = req.body.basket.map((item) => {
     return {
       price_data: {
         currency: "usd",
@@ -88,4 +91,4 @@ router.post('/create-checkout-session', async (req, res) => {
   res.send({ url: session.url });
 });
 
-export default router; 
+module.exports = router;

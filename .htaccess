@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+ RewriteEngine On
+ RewriteRule ^$ http://127.0.0.1:3005/ [P,L]
+ RewriteCond %{REQUEST_FILENAME} !-f
+ RewriteCond %{REQUEST_FILENAME} !-d
+ RewriteRule ^(.*)$ http://127.0.0.1:3005/$1 [P,L]
+</IfModule>
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>

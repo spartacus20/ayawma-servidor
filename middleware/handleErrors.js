@@ -13,9 +13,10 @@ const ERROR_HANDLERS = {
     defaultError : res => res.status(500).end()
 }
 
-
-export  const handleError = (err, req, res, next) => {
+const handleError = (err, req, res, next) => {
     const handler =  ERROR_HANDLERS[err.name] || ERROR_HANDLERS.defaultError
     handler(res, err)
 }
 
+
+module.exports = handleError
