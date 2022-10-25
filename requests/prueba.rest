@@ -3,9 +3,9 @@ content-type: application/json
 
 {
     "productID": 2,
-    "userID": 2,
+    "userID": 3,
     "comment": {
-        "comment": "To gucci pah",
-        "rating": 5
+        "comment": "asdsa",
+        "rating": 2
     }
 }

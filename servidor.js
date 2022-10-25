@@ -10,7 +10,7 @@ const { conn, getProduct, getProductInformation } = require("./mysql_conector.js
 
 //ROUTES 
 
-const rating = require("./routes/rating.js");
+const rating = require("./routes/rating.js")
 const register = require("./routes/register.js")
 const login = require("./routes/login.js"); 
 const user = require("./routes/user.js")
@@ -35,7 +35,7 @@ app.use(
 app.use("/api/user", user);
 app.use(bodyParser.json());
 
-app.post("/users/register", register); 
+app.use("/users/register", register); 
 app.post("/users/login", login); 
 app.post("/new-rating", rating); 
 /* A post request that is handling the registration of the user. */
@@ -73,7 +73,7 @@ app.post('/create-checkout-session', stripe)
 
 
 /* Getting the user information from the database. */
-app.get("/api/user", user);
+
 
 
 
@@ -84,9 +84,9 @@ app.get("/images/:img",  (req, res) => {
   });
  
 /* A middleware that is handling the errors. */
-// app.use((err, req, res, next) => {
-//   handleError(err, req, res, next);
-// });
+app.use((err, req, res, next) => {
+  handleError(err, req, res, next);
+});
 
 app.listen(port, () => {
   /* Connecting to the database. */

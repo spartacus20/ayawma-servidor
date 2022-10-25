@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/new-rating', (req, res) => {
 
     const  { productID, userID, comment } = req.body;
-
+   console.log(req.body)
     var data = new Date()
 
     const month = ["Jamuary", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
