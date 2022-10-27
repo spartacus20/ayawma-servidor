@@ -32,12 +32,12 @@ app.use(
     credentials: true,
   })
 );
-app.use("/api/user", user);
 app.use(bodyParser.json());
 
-app.use("/users/register", register); 
-app.post("/users/login", login); 
-app.post("/new-rating", rating); 
+app.use("/", user);
+app.use("/", register)
+app.use("/", login);
+app.use("/", rating);
 /* A post request that is handling the registration of the user. */
 
 

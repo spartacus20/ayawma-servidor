@@ -1,0 +1,6 @@
+POST http://localhost:3001/reviews
+content-type: application/json
+
+{
+    "productID": 6
+}

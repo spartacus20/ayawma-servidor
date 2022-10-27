@@ -24,7 +24,26 @@ router.post('/new-rating', (req, res) => {
 
 })
 
+router.post('/rating', (req, res) => {
+   
+   const { productID } = req.body 
 
+   const QUERY = 'select * from rating where productID = ?'
+
+   conector.query(QUERY,[productID], (err, rows) => {
+      if (err) throw err;
+      const data = JSON.parse(JSON.stringify(rows));
+
+      console.log(rows.length)
+
+      if(rows.length <= 0){
+         return res.status(404).send({msg: "No reviews found"})
+      }
+      
+      return res.status(200).send({data})
+   }) 
+
+})
 
 
 
