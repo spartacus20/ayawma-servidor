@@ -28,7 +28,12 @@ router.post('/rating', (req, res) => {
    
    const { productID } = req.body 
 
-   const QUERY = 'select * from rating where productID = ?'
+   const QUERY = (`
+   
+   select users.name,rating.rating,rating.comment,rating.comment_data from rating 
+   INNER JOIN users ON rating.userID = users.id 
+   INNER JOIN products ON rating.productID = products.id 
+   where productID = ?`)
 
    conector.query(QUERY,[productID], (err, rows) => {
       if (err) throw err;
@@ -37,9 +42,10 @@ router.post('/rating', (req, res) => {
       console.log(rows.length)
 
       if(rows.length <= 0){
-         return res.status(404).send({msg: "No reviews found"})
+         return res.send({data})
       }
       
+
       return res.status(200).send({data})
    }) 
 
