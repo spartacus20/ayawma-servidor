@@ -17,26 +17,35 @@ function conn () {
   });
 };
 
-function RegisterUser (userName, email, password, res, accessToken, refreshToken) {
+const RegisterUser = (userName, email, password, res) => {
   //CHECK IF  USER HAS ALEREADY REGISTERED.
 
- 
+
   var CHECKUSER = "SELECT * FROM users WHERE email = '" + email + "'";
   conector.query(CHECKUSER, (err, rows) => {
     if (err) throw err;
- 
-    if(password) {
+
+    if (password) {
       if (rows.length > 0) {
         return res.status(400).send({ msg: "USER ALEREADY REGISTERED" });
       }
     }
-    
-    console.log("Valor de password: "+password);
+
+    console.log("Valor de password: " + password);
     var QUERY = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
 
-    conector.query(QUERY, [userName, email, password], (error) => {
+    conector.query(QUERY, [userName, email, password], (error, row) => {
+      //Create de Access Token and send it to the user
+      const userForToken = {
+        id: row.insertId
+      };
+
+      console.log(row.insertId);
+
+      const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_SECRET);
+      const refreshToken = jwt.sign(userForToken, process.env.REFRESH_TOKEN_SECRET);
+
       if (error) throw error;
-      
       res.status(200).send({
         message: "Success",
         username: userName,
@@ -44,7 +53,7 @@ function RegisterUser (userName, email, password, res, accessToken, refreshToken
         accessToken: accessToken,
         refreshToken: refreshToken,
 
-      });         
+      });
     });
   });
 };
@@ -108,7 +117,7 @@ function LoginUser (email, password, res, name) {
 
 
 function getDecodedToken (req)  {
-  const authorization = req.get('Authorization');
+  const authorization = req.get('Authorization') || req.body.headers.Authorization;
   let token = "";
   if (authorization && authorization.toLocaleLowerCase().startsWith("bearer")) {
     token = authorization.substring(7);
@@ -175,13 +184,18 @@ function getProduct  (product, res)  {
 function getUser  (request, response)  {
   
   const decodedToken = getDecodedToken(request);
-  const QUERY = "SELECT name,email FROM users WHERE id = "+decodedToken.id+""
-  conector.query(QUERY,(err, rows) => {
+  const QUERY = "SELECT name,email FROM users WHERE id = ?"
+  
+  console.log(decodedToken)
+ 
+  conector.query(QUERY,[decodedToken.id], (err, rows) => {
     if(err) throw err;
     const data = JSON.parse(JSON.stringify(rows));
-    response.status(200).send({data})
+    console.log("yola")
+    console.log(data)
+     response.status(201).send({data})
   })
-  
+ 
 
   
 

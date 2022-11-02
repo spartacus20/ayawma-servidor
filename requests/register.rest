@@ -1,4 +1,4 @@
-POST http://localhost:3001/users/register
+POST https://api.ayawma.com/users/register
 content-type: application/json
 
 {
