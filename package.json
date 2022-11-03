@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "servidor.js",
-
   "scripts": {
     "start": "node servidor.js",
     "dev": "nodemon servidor.js"
@@ -20,6 +19,7 @@
     "express-session": "^1.17.3",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.8.0",
     "nodemon": "^2.0.19",
     "stripe": "^10.13.0"
   }
