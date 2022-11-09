@@ -1,15 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+const express = require('express')
+require('dotenv').config();
+const nodemailer = require('nodemailer');
+const jwt = require("jsonwebtoken");
+const { conector } = require("../mysql_conector.js");
+const bcrypt = require("bcrypt");
 
-<body>
-    <div class="nl-container" style="min-width: 320px;Margin: 0 auto;">
+const router = express.Router();
+
+
+router.post("/forgot-password", (req, res) => {
+
+    const { email } = req.body;
+    console.log(req.body)
+    const QUERY = "SELECT * FROM users WHERE email = ?";
+
+    conector.query(QUERY, [email], (err, rows) => {
+
+        if (err) throw err;
+
+
+
+        const data = JSON.parse(JSON.stringify(rows));
+
+        const secret = process.env.REFRESH_TOKEN_SECRET + data[0].password;
+
+        const token = jwt.sign({ email: data[0].email, id: data[0].id }, secret, {
+            expiresIn: "15m",
+        })
+
+        const link = process.env.CLIENT_URL + "reset-password/" + data[0].id + "/" + token
+        console.log(link)
+
+        var transporter = nodemailer.createTransport(
+            {
+                host: "mail.ayawma.com",
+                port: 465,
+                secure: true, // true for 465, false for other ports
+                auth: {
+                    user: "no-reply@ayawma.com", // generated ethereal user
+                    pass: "(i*i&L$peg??", // generated ethereal password
+                },
+            }
+        )
+
+        email_body = `
+        <div class="nl-container" style="min-width: 320px;Margin: 0 auto;">
         <div style="background-color:transparent;">
             <div class="block-grid"
                 style="Margin: 0 auto;max-width: 600px;width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #ffffff;">
@@ -60,7 +96,7 @@
                         <div style="width: 100% !important;">
                             <div align="center" style="margin-right: 8px;margin-left: 8px;">
                                     <!-- link aqui -->
-                                 <a href=""
+                                 <a href="${link}"
                                     style="color: #FFFFFF; text-decoration: none;" target="_blank"
                                     title="Update your password">
 
@@ -68,7 +104,7 @@
                                         style="display: inline-block; line-height: 18px; color: #FFFFFF; background-color: black; border-radius: 3px; max-width: 100%; width: auto; border: 0px solid transparent ; padding-top: 12px; padding-right: 24px; padding-bottom: 12px; padding-left: 24px; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; text-align: center;">
 
                                         <span>
-                                            <p><span style="font-size: 14pt;">Actualizar contraseña</span></p>
+                                            <p><span style="font-size: 14pt;">Update your password</span></p>
                                         </span>
 
                                     </div>
@@ -100,6 +136,55 @@
             </div>
         </div>
     </div>
-</body>
+        `
 
-</html>
+        var mailOptions = {
+            from: '"Ayawma" <no-reply@ayawma.com>',
+            to: data[0].email,
+            subject: "Password Reset",
+            text: link,
+            html: email_body,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
+
+        res.send({ msg: "Email has been sent" })
+
+    })
+
+
+
+})
+
+router.post("/reset-password/:id/:token",  async (req, res) => {
+
+    const { id, token } = req.params
+    const { password } = req.body
+    console.log(password)
+    console.log(token)
+    let passwordHashed = await bcrypt.hash(password, 10); 
+    // const verifiedToken =  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
+    // console.log(verifiedToken)
+    console.log(passwordHashed)
+    const QUERY = "UPDATE `users` SET password = ? WHERE id = ?"; 
+    
+    conector.query(QUERY, [passwordHashed, id], (err) => {
+        if(err) throw err; 
+        res.send({msg: "Password has been changed"})
+    })
+    console.log(passwordHashed)
+
+
+
+
+})
+
+
+
+module.exports = router;

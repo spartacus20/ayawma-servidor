@@ -1,0 +1,11 @@
+POST http://localhost:3001/pr
+content-type: application/json
+
+{
+    "productID": 2,
+    "userID": 3,
+    "comment": {
+        "comment": "asdsa",
+        "rating": 2
+    }
+}

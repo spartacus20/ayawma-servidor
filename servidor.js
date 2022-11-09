@@ -15,6 +15,7 @@ const register = require("./routes/register.js")
 const login = require("./routes/login.js"); 
 const user = require("./routes/user.js")
 const stripe = require("./routes/stripe.js"); 
+const resetpassword = require("./routes/resetpassword.js")
 
 
 /* Getting the path of the file. */
@@ -38,6 +39,7 @@ app.use("/", user);
 app.use("/", register)
 app.use("/", login);
 app.use("/", rating);
+app.use("/", resetpassword)
 /* A post request that is handling the registration of the user. */
 
 
