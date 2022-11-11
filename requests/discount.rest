@@ -1,5 +1,17 @@
-GET  http://localhost:3001/api/user
-Authorization: Bearer ''
+POST  http://localhost:3001/create-checkout-session
+content-type: application/json
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNjY2Mjg4Njk1fQ.ALjip0vTJk7O2zI2-sdu0RYQsIbcR1GzCMvp8x0tYeo
+{
+    "basket": [
+        { 
+            "title": "teclado 100% real no fake",
+            "id": 2,
+            "price": 100,
+            "quantity": 1
+        },
+        
+        
 
+    ]
+   
+}
