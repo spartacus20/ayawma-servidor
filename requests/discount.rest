@@ -1,17 +1,6 @@
-POST  http://localhost:3001/create-checkout-session
+POST http://localhost:3001/create-payment-intent
 content-type: application/json
 
 {
-    "basket": [
-        { 
-            "title": "teclado 100% real no fake",
-            "id": 2,
-            "price": 100,
-            "quantity": 1
-        },
-        
-        
-
-    ]
-   
+    "basket": "test@example.com"
 }
