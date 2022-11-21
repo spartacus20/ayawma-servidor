@@ -1,11 +1,15 @@
-POST http://localhost:3001/pr
+POST http://localhost:3001/update-payment-intent
 content-type: application/json
 
 {
-    "productID": 2,
-    "userID": 3,
-    "comment": {
-        "comment": "asdsa",
-        "rating": 2
-    }
+  "id": "pi_3M6gghKO3d18apjL0uvxK5Rg",
+  "name": "Jorge Tomas", 
+  "address": {
+    "line1": "asd",
+    "line2": "dsa",
+    "country": "portugal",
+    "postal_code": "2350",
+    "state": "samtarem",
+    "city": "torres novas"
+  }
 }
