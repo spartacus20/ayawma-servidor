@@ -15,6 +15,7 @@ const register = require("./routes/register.js")
 const login = require("./routes/login.js"); 
 const user = require("./routes/user.js")
 const stripe = require("./routes/stripe2.js"); 
+const order = require("./routes/order.js"); 
 const resetpassword = require("./routes/resetpassword.js")
 
 
@@ -41,6 +42,7 @@ app.use("/", login);
 app.use("/", rating);
 app.use("/", resetpassword)
 app.use("/", stripe);
+app.use("/", order);
 /* A post request that is handling the registration of the user. */
 
 
