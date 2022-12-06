@@ -1,7 +1,8 @@
 require("dotenv").config();
 const express = require("express");
-const  { conector, getDecodedToken } = require("../mysql_conector.js");
 const router = express.Router();
+const  { conector, getDecodedToken } = require("../mysql_conector.js");
+ 
 
 router.post("/set-order", (req, res) => {
 

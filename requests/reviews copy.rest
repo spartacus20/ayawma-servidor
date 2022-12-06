@@ -1,0 +1,6 @@
+GET http://localhost:3001/api/product/tapete
+# content-type: application/json
+
+# {
+#     "productID": 6
+# }

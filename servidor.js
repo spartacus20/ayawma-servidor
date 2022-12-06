@@ -1,22 +1,24 @@
-require("dotenv").config(); 
+require("dotenv").config();
 
-const bodyParser = require("body-parser"); 
-const path = require("path"); 
-const express = require("express"); 
-const cors = require("cors"); 
-const  handleError  = require("./middleware/handleErrors.js")
-const { conn, getProduct, getProductInformation } = require("./mysql_conector.js")
+const fileUpload = require('express-fileupload');
+const bodyParser = require("body-parser");
+const path = require("path");
+const express = require("express");
+const cors = require("cors");
+const handleError = require("./middleware/handleErrors.js")
+const { conn, getProduct, getProductInformation, addProduct } = require("./mysql_conector.js")
 
 
 //ROUTES 
 
 const rating = require("./routes/rating.js")
 const register = require("./routes/register.js")
-const login = require("./routes/login.js"); 
+const login = require("./routes/login.js");
 const user = require("./routes/user.js")
-const stripe = require("./routes/stripe2.js"); 
-const order = require("./routes/order.js"); 
+const stripe = require("./routes/stripe2.js");
+const order = require("./routes/order.js");
 const resetpassword = require("./routes/resetpassword.js")
+// const product = require("./routes/product.js"); 
 
 
 /* Getting the path of the file. */
@@ -35,6 +37,8 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+app.use(fileUpload());
+
 
 app.use("/", user);
 app.use("/", register)
@@ -43,14 +47,41 @@ app.use("/", rating);
 app.use("/", resetpassword)
 app.use("/", stripe);
 app.use("/", order);
-/* A post request that is handling the registration of the user. */
+// app.use("/", product);
 
 
-/* A post request that is handling the login of the user. */
+app.post("/product/add", (req, res) => {
+
+  /* Checking if the file is null, if it is null it is returning a message saying that there is no file
+  uploaded. If it is not null it is getting the name, price and description from the body. Then it is
+  getting the file from the files.file. Then it is moving the file to the images folder. If there is
+  an error it is returning a message saying that there is an error. If there is no error it is
+  returning the file name and the file path. */
+
+  if (req.files === null) {
+    return res.status(400).json({ msg: 'No file uploaded' });
+  }
+
+  const { name, price, description } = req.body
+  const file = req.files.file;
+  // console.log(file.name)
+  // console.log(__dirname)
+  addProduct(name, price, description, file.name);
+  file.mv(`${__dirname}/images/${file.name}`, err => {
+    if(err) {
+      console.error(err);
+      return res.status(500).send(err);
+    }
+    res.json({ fileName: file.name, filePath: `/images/${file.name}` });
+  })
+
+ 
+})
 
 
 
-/* A get request that is getting the information of the product. */
+
+
 
 app.get("/api/product/:product/info", async (req, res) => {
 
@@ -69,7 +100,7 @@ app.get("/api/product/:producto", async (req, res) => {
 })
 
 app.get('/prueba', (req, res) => {
-  res.send({msg: "Everything is great!"});
+  res.send({ msg: "Everything is great!" });
 })
 
 
@@ -77,21 +108,17 @@ app.get('/prueba', (req, res) => {
 app.post('/create-checkout-session', stripe)
 
 
-/* Getting the user information from the database. */
-
-
-
 
 /* Sending the image to the client. */
-app.get("/images/:img",  (req, res) => {
-   let img = req.params.img;
-   res.sendFile(path.join(__dirname+`/images/${img}`))
-  });
- 
-/* A middleware that is handling the errors. */
-app.use((err, req, res, next) => {
-  handleError(err, req, res, next);
+app.get("/images/:img", (req, res) => {
+  let img = req.params.img;
+  res.sendFile(path.join(__dirname + `/images/${img}`))
 });
+
+/* A middleware that is handling the errors. */
+// app.use((err, req, res, next) => {
+//   handleError(err, req, res, next);
+// });
 
 app.listen(port, () => {
   /* Connecting to the database. */
