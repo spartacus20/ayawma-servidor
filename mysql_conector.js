@@ -3,19 +3,10 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const conector = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
+const conector = require("./middleware/DBhandler.js");
 
-function conn() {
-  conector.connect((err) => {
-    if (err) throw err;
-    console.log("Database has been connected");
-  });
-};
+
+
 
 const RegisterUser = (userName, email, password, res) => {
   //CHECK IF  USER HAS ALEREADY REGISTERED.
@@ -223,5 +214,5 @@ function addProduct(title, price, description, image) {
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = { LoginUser, getUser, RegisterUser, conn, getDecodedToken, getProduct, getProductInformation, conector, addProduct};
+module.exports = { LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct };
 

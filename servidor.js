@@ -6,8 +6,8 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const handleError = require("./middleware/handleErrors.js")
-const { conn, getProduct, getProductInformation, addProduct } = require("./mysql_conector.js")
-
+const {  getProduct, getProductInformation, addProduct, handleDisconnect } = require("./mysql_conector.js")
+const databaseMiddleware = require("./middleware/DBhandler.js")
 
 //ROUTES 
 
@@ -18,6 +18,7 @@ const user = require("./routes/user.js")
 const stripe = require("./routes/stripe2.js");
 const order = require("./routes/order.js");
 const resetpassword = require("./routes/resetpassword.js")
+
 // const product = require("./routes/product.js"); 
 
 
@@ -116,13 +117,15 @@ app.get("/images/:img", (req, res) => {
 });
 
 /* A middleware that is handling the errors. */
-// app.use((err, req, res, next) => {
-//   handleError(err, req, res, next);
-// });
+app.use((err, req, res, next) => {
+  handleError(err, req, res, next);
+});
+
+app.use((req, res, next) => {databaseMiddleware});
+
+
 
 app.listen(port, () => {
-  /* Connecting to the database. */
-  conn
   /* Serving the static files in the public folder. */
   express.static(path.join(__dirname, "./public"))
   console.log("Server is running on port " + port + "\n Everything is working");

@@ -1,8 +1,8 @@
-POST https://api.ayawma.com/users/register
+POST http://localhost:3001/users/register
 content-type: application/json
 
 {
     "username": "admin",
-    "email": "tes2t@example.com",
+    "email": "tes2ta@example.com",
     "password": "123"
 }
