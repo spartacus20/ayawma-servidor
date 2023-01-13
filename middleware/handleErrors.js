@@ -9,7 +9,7 @@ const ERROR_HANDLERS = {
          res.status(401).send({error: "Token missing or invalid"}),
     ReferenceError: (res) => 
         res.status(409).send({error: "Someting wrong  with reference."}),
-
+    
     defaultError : res => res.status(500).end()
 }
 
