@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const conector = require("./middleware/DBhandler.js");
+const { convertLength } = require("@mui/material/styles/cssUtils.js");
 
 
 
@@ -27,6 +28,7 @@ const RegisterUser = (userName, email, password, res) => {
 
     conector.query(QUERY, [userName, email, password], (error, row) => {
       //Create de Access Token and send it to the user
+      console.log("Valor de row: " + row);
       const userForToken = {
         id: row.insertId
       };
@@ -83,6 +85,7 @@ function LoginUser(email, password, res, name) {
 
     } else {
 
+      console.log(data)
       //EVERYTHIN IS OK. 
       if (rows.length > 0) {
         const Tokeninfo = {
@@ -106,6 +109,29 @@ function LoginUser(email, password, res, name) {
 
 }
 
+function AdminLogin(email, password, res) {
+  var CHECK = "SELECT * FROM users WHERE email = '" + email + "' and admin = 1";
+  conector.query(CHECK, async (err, rows) => {
+    if (err) throw err;
+    let accessToken = {}
+    let refreshToken = {}
+    const data = JSON.parse(JSON.stringify(rows));
+
+    if (rows.length > 0) {
+      const Tokeninfo = {
+        id: data[0].id,
+      }
+      accessToken = jwt.sign(Tokeninfo, process.env.ACCESS_TOKEN_SECRET);
+      refreshToken = jwt.sign(Tokeninfo, process.env.REFRESH_TOKEN_SECRET);
+      let passwordHash = data[0].password
+      let pass = bcrypt.compare(password, passwordHash).then(response => {
+        res.status(201).send({ msg: "Success", accessToken: accessToken, refreshToken: refreshToken });
+      }).catch(err => { res.status(401).send({ msg: "Email or password invalid" }) })
+    } else {
+      res.status(401).send({ msg: "Email or password invalid" })
+    }
+  })
+}
 
 function getDecodedToken(req) {
   const authorization = req.get('Authorization') || req.body.headers.Authorization;
@@ -214,5 +240,5 @@ function addProduct(title, price, description, image) {
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = { LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct };
+module.exports = {AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct };
 

@@ -65,16 +65,18 @@ app.post("/product/add", (req, res) => {
 
   const { name, price, description } = req.body
   const file = req.files.file;
-  // console.log(file.name)
+
+  console.log(file.data)
+  // console.log(file.data)
   // console.log(__dirname)
-  addProduct(name, price, description, file.name);
-  file.mv(`${__dirname}/images/${file.name}`, err => {
-    if(err) {
-      console.error(err);
-      return res.status(500).send(err);
-    }
-    res.json({ fileName: file.name, filePath: `/images/${file.name}` });
-  })
+  // addProduct(name, price, description, file.name);
+  // file.mv(`${__dirname}/images/${file.name}`, err => {
+  //   if(err) {
+  //     console.error(err);
+  //     return res.status(500).send(err);
+  //   }
+  //   res.json({ fileName: file.name, filePath: `/images/${file.name}` });
+  // })
 
  
 })

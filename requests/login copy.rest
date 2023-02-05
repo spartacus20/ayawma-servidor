@@ -1,8 +1,7 @@
-POST http://localhost:3001/users/register
+POST http://localhost:3001/api/admin/login
 content-type: application/json
 
 {
-    "username": "admin",
     "email": "a@example.com",
     "password": "1"
 }
