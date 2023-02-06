@@ -163,7 +163,14 @@ function getProductInformation(product, res) {
   })
 }
 
-
+function getAllProducts(res) {
+  const QUERY = "SELECT * from products"
+  conector.query(QUERY, (err, rows) => {
+    if (err) throw err;
+    const data = JSON.parse(JSON.stringify(rows));
+    res.status(201).send({ data })
+  })
+}
 
 function getDiscount(res, code) {
 
@@ -240,5 +247,5 @@ function addProduct(title, price, description, image) {
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = {AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct };
+module.exports = {AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts};
 

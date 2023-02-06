@@ -6,7 +6,7 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const handleError = require("./middleware/handleErrors.js")
-const {  getProduct, getProductInformation, addProduct, handleDisconnect } = require("./mysql_conector.js")
+const {  getProduct, getProductInformation, addProduct, getAllProducts } = require("./mysql_conector.js")
 const databaseMiddleware = require("./middleware/DBhandler.js")
 
 //ROUTES 
@@ -94,6 +94,7 @@ app.get("/api/product/:product/info", async (req, res) => {
 })
 
 
+
 /* This is a get request that is getting the product from the database. */
 app.get("/api/product/:producto", async (req, res) => {
 
@@ -101,6 +102,11 @@ app.get("/api/product/:producto", async (req, res) => {
   getProduct(product, res)
 
 })
+
+app.get("/api/products", async (req, res) => {
+  getAllProducts(res); 
+})
+
 
 app.get('/prueba', (req, res) => {
   res.send({ msg: "Everything is great!" });
