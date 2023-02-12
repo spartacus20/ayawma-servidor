@@ -233,19 +233,48 @@ function getUser(request, response) {
 
 };
 
-function addProduct(title, price, description, image) {
-  const QUERY = "INSERT INTO products (title, price, description, images) VALUES ('" + title + "','" + price + "','" + description + "','" + image + "')"
-  conector.query(QUERY, (err) => {
-    if (err) throw err;
-    console.log("Product added")
+
+function addProduct(id, title, price, description, image, res) {
+  const QUERY = "INSERT INTO products (id, title, price, description, images) VALUES (?, ?, ?, ?, ?)"
+  // console.log(JSON.parse(image))
+  conector.query(QUERY, [id,title,price,description, JSON.stringify(image)] ,(err) => {
+    if (err) console.log(err);
+    res.send({ msg: "Product added successfully!" });
+
   })
 
 
+}
+
+const cloudinary = require('./Config/cloudinary.js');
+
+function removeProduct(id, res) {
+
+  const QUERY2 = "SELECT * FROM products WHERE id = ?"
+  conector.query(QUERY2, [id], (err, rows) => {
+    if (err) console.log(err);
+    const data = JSON.parse(JSON.stringify(rows));
+    const { images } = data[0]
+    const imagesArray = JSON.parse(images)
+    imagesArray.forEach(image => {
+      cloudinary.uploader.destroy(image.public_id, (err, result) => {
+        if (err) console.log(err);
+        console.log(result)
+      })
+    })
+
+  })
+
+  const QUERY = "DELETE FROM products WHERE id = ?"
+  conector.query(QUERY, [id], (err) => {
+    if (err) console.log(err);
+    res.send({ msg: "Product removed successfully!" });
+  })
 }
 
 
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = {AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts};
+module.exports = {removeProduct,AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts};
 
