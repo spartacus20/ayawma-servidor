@@ -94,9 +94,14 @@ function LoginUser(email, password, res, name) {
         accessToken = jwt.sign(Tokeninfo, process.env.ACCESS_TOKEN_SECRET);
         refreshToken = jwt.sign(Tokeninfo, process.env.REFRESH_TOKEN_SECRET);
         let passwordHash = data[0].password
-        let pass = bcrypt.compare(password, passwordHash).then(response => {
+
+        const isMatch = await bcrypt.compare(password, passwordHash)
+        if (!isMatch) {
+          res.status(401).send({ msg: "Email or password invalid" })
+        } else {
           res.status(201).send({ msg: "Success", accessToken: accessToken, refreshToken: refreshToken });
-        }).catch(err => { res.status(401).send({ msg: "Email or password invalid" }) })
+        }
+
 
       } else {
         res.status(401).send({ msg: "Email or password invalid" })
@@ -124,9 +129,12 @@ function AdminLogin(email, password, res) {
       accessToken = jwt.sign(Tokeninfo, process.env.ACCESS_TOKEN_SECRET);
       refreshToken = jwt.sign(Tokeninfo, process.env.REFRESH_TOKEN_SECRET);
       let passwordHash = data[0].password
-      let pass = bcrypt.compare(password, passwordHash).then(response => {
+      const isMatch = await bcrypt.compare(password, passwordHash)
+      if (!isMatch) {
+        res.status(401).send({ msg: "Email or password invalid" })
+      } else {
         res.status(201).send({ msg: "Success", accessToken: accessToken, refreshToken: refreshToken });
-      }).catch(err => { res.status(401).send({ msg: "Email or password invalid" }) })
+      }
     } else {
       res.status(401).send({ msg: "Email or password invalid" })
     }
@@ -172,6 +180,16 @@ function getAllProducts(res) {
   })
 }
 
+function getAllUsers(res) {
+  const QUERY = "SELECT * from users"
+  conector.query(QUERY, (err, rows) => {
+    if (err) throw err;
+    const data = JSON.parse(JSON.stringify(rows));
+    res.status(201).send({ data })
+  })
+}
+
+
 function getDiscount(res, code) {
 
   const QUERY = "SELECT * FROM discount WHERE code='" + code + "'"
@@ -212,6 +230,23 @@ function getProduct(product, res) {
   })
 }
 
+function getProductByID(id, res) {
+
+  const query = "SELECT * FROM products WHERE id = " + id;
+  conector.query(query, (err, rows) => {
+
+    if (rows.length > 0) {
+      const data = JSON.parse(JSON.stringify(rows));
+      res.status(201).send({ data })
+    } else {
+      res.send({ msg: "Product not found" });
+    }
+  })
+
+}
+
+
+
 //TODO: Validate refreshToken and send user information to the client.
 function getUser(request, response) {
 
@@ -237,7 +272,7 @@ function getUser(request, response) {
 function addProduct(id, title, price, description, image, res) {
   const QUERY = "INSERT INTO products (id, title, price, description, images) VALUES (?, ?, ?, ?, ?)"
   // console.log(JSON.parse(image))
-  conector.query(QUERY, [id,title,price,description, JSON.stringify(image)] ,(err) => {
+  conector.query(QUERY, [id, title, price, description, JSON.stringify(image)], (err) => {
     if (err) console.log(err);
     res.send({ msg: "Product added successfully!" });
 
@@ -276,5 +311,5 @@ function removeProduct(id, res) {
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = {removeProduct,AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts};
+module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers };
 

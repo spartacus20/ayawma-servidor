@@ -6,7 +6,7 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const handleError = require("./middleware/handleErrors.js")
-const { getProduct, getProductInformation, addProduct, getAllProducts } = require("./mysql_conector.js")
+const { getProduct, getProductInformation, addProduct, getAllProducts, getProductByID, getAllUsers } = require("./mysql_conector.js")
 const databaseMiddleware = require("./middleware/DBhandler.js")
 const cloudinary = require("./Config/cloudinary.js");
 const { Buffer } = require('buffer');
@@ -83,11 +83,14 @@ app.get("/api/products", async (req, res) => {
   getAllProducts(res);
 })
 
-
+app.get("/api/product/:id/edit", async (req, res) => {
+  let id = req.params.id;
+  getProductByID(id, res)
+})
 
 
 app.get('/prueba', (req, res) => {
-  res.send({ msg: "Everything is great!" });
+  getAllUsers(res)
 })
 
 

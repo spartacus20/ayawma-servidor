@@ -1,6 +1,2 @@
-POST http://localhost:3001/create-payment-intent
+GET http://localhost:3001/prueba
 content-type: application/json
-
-{
-    "basket": "test@example.com"
-}

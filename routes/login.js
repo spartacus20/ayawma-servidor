@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const  { LoginUser, AdminLogin } = require("../mysql_conector.js");
-
+const bcrypt = require("bcrypt");
 const router = express.Router();
 
 router.post("/users/login", async (req, res) => 
@@ -11,7 +11,6 @@ router.post("/users/login", async (req, res) =>
   const name = body.username;
   const email = body.email;
   const password = body.password;
-
   LoginUser(email, password, res, name); 
 
 })
