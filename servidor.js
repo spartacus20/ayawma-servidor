@@ -88,6 +88,10 @@ app.get("/api/product/:id/edit", async (req, res) => {
   getProductByID(id, res)
 })
 
+app.get("api/product/:id/information", async (req, res) => {
+  let id = req.params.id;
+  getProductByID(id, res);
+})
 
 app.get('/prueba', (req, res) => {
   getAllUsers(res)
