@@ -21,6 +21,7 @@ const stripe = require("./routes/stripe2.js");
 const order = require("./routes/order.js");
 const resetpassword = require("./routes/resetpassword.js")
 const admin = require("./routes/admin.js")
+serve
 
 // const product = require("./routes/product.js"); 
 
@@ -54,6 +55,7 @@ app.use("/", resetpassword)
 app.use("/", stripe);
 app.use("/", order);
 app.use("/", admin);
+app.use("/", products);
 // app.use("/", product);
 
 

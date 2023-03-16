@@ -6,6 +6,18 @@ const jwt = require("jsonwebtoken");
 const conector = require("./middleware/DBhandler.js");
 
 
+const getRamdomProducts = (num, res ) => {
+
+  var QUERY = "SELECT * FROM products ORDER BY RAND() LIMIT "+num
+
+  conector.query(QUERY, (err, rows) => {
+    if (err) throw err;
+    const data = JSON.parse(JSON.stringify(rows));
+    res.status(201).send({ data })
+  })
+
+}
+
 
 
 const RegisterUser = (userName, email, password, res) => {
@@ -310,5 +322,5 @@ function removeProduct(id, res) {
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers };
+module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers, getRamdomProducts };
 
