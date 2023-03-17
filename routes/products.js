@@ -10,9 +10,12 @@ router.get("/api/products/get/:number", async (req, res) => {
     console.log(number)
     getRamdomProducts(number, res)
 
-
-
 })
+
+router.get("/api/products/most_popular", async (req, res) => {
+    
+})
+
 
 
 

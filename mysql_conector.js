@@ -319,6 +319,25 @@ function removeProduct(id, res) {
 }
 
 
+const getMostPopularProducts = () => {
+
+  const QUERY1 = "SELECT productID, AVG(rating) as mean_rating FROM rating GROUP BY productID ORDER BY mean_rating DESC LIMIT 3;"
+  conector.query(QUERY1, (err, rows) => {
+    if(err) console.log(err);
+    if(rows > 0){
+       
+    }else{ 
+      
+    }
+  
+    
+  
+  }
+    )}
+  
+
+
+
 //const QUERY = "SELECT * FROM users where email="
 
 
