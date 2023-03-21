@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
-const { getRamdomProducts } = require("../mysql_conector");
+const { getRamdomProducts, getMostPopularProducts, getLastProducts } = require("../mysql_conector");
 
 
 router.get("/api/products/get/:number", async (req, res) => {
@@ -14,6 +14,16 @@ router.get("/api/products/get/:number", async (req, res) => {
 
 router.get("/api/products/most_popular", async (req, res) => {
     
+
+    getMostPopularProducts( res)
+
+})
+
+router.get("/api/products/lastestproducts", async (req, res) => {
+    
+
+    getLastProducts(res)
+
 })
 
 

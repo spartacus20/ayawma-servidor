@@ -6,9 +6,9 @@ const jwt = require("jsonwebtoken");
 const conector = require("./middleware/DBhandler.js");
 
 
-const getRamdomProducts = (num, res ) => {
+const getRamdomProducts = (num, res) => {
 
-  var QUERY = "SELECT * FROM products ORDER BY RAND() LIMIT "+num
+  var QUERY = "SELECT * FROM products ORDER BY RAND() LIMIT " + num
 
   conector.query(QUERY, (err, rows) => {
     if (err) throw err;
@@ -319,27 +319,56 @@ function removeProduct(id, res) {
 }
 
 
-const getMostPopularProducts = () => {
+const getMostPopularProducts = (res) => {
 
-  const QUERY1 = "SELECT productID, AVG(rating) as mean_rating FROM rating GROUP BY productID ORDER BY mean_rating DESC LIMIT 3;"
+  const QUERY1 = "SELECT productID, AVG(rating)  as mean_rating, COUNT(*) as num_ratings FROM rating GROUP BY productID ORDER BY mean_rating DESC LIMIT 4;"
   conector.query(QUERY1, (err, rows) => {
-    if(err) console.log(err);
-    if(rows > 0){
-       
-    }else{ 
-      
+    if (err) console.log(err);
+    const data = JSON.parse(JSON.stringify(rows));
+
+    if (data.length > 0) {
+      const QUERY2 = "SELECT * FROM products WHERE id IN (?, ?, ?, ?)";
+     
+    console.log(data[0].productID)
+    console.log(data[1].productID)
+    console.log(data[2].productID)
+    // res.status(201).send({ data })
+     conector.query(QUERY2, [data[0].productID, data[1].productID, data[2].productID, data[3].productID], (err, rows2) => {
+        if(err) console.error(err);
+        const product = JSON.parse(JSON.stringify(rows2));
+        console.log("product");
+        res.status(201).send({ product, data })
+      })
+
     }
-  
-    
-  
+
+
+
+
+
+
+
+
+
+
+
   }
-    )}
-  
+  )
+}
+
+const getLastProducts = (res) => {
+  const QUERY = "SELECT * FROM products ORDER BY id DESC LIMIT 4;"
+  conector.query(QUERY, (err, rows) => {
+    if (err) console.log(err)
+    const products = JSON.parse(JSON.stringify(rows));
+    res.status(201).send({ products})
+  })
+}
 
 
 
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers, getRamdomProducts };
+module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers, getRamdomProducts, getMostPopularProducts, getLastProducts };
 

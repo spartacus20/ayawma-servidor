@@ -1,0 +1,2 @@
+GET http://localhost:3001/api/products/most_popular
+content-type: application/json

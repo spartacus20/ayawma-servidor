@@ -21,7 +21,7 @@ const stripe = require("./routes/stripe2.js");
 const order = require("./routes/order.js");
 const resetpassword = require("./routes/resetpassword.js")
 const admin = require("./routes/admin.js")
-serve
+const products = require("./routes/products.js")
 
 // const product = require("./routes/product.js"); 
 
