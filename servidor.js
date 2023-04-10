@@ -22,6 +22,7 @@ const order = require("./routes/order.js");
 const resetpassword = require("./routes/resetpassword.js")
 const admin = require("./routes/admin.js")
 const products = require("./routes/products.js")
+const contact = require("./routes/contact.js")
 
 // const product = require("./routes/product.js"); 
 
@@ -30,13 +31,13 @@ const products = require("./routes/products.js")
 
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 
 //Cors policy settings.
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "http://localhost:3001"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -56,6 +57,8 @@ app.use("/", stripe);
 app.use("/", order);
 app.use("/", admin);
 app.use("/", products);
+app.use("/", contact);
+
 // app.use("/", product);
 
 

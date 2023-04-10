@@ -1,0 +1,9 @@
+POST http://localhost:3001/support
+content-type: application/json
+
+{
+    "name": "Jorge",
+    "email": "jorgetomasdavalillo@gmail.com",
+    "subject": "test1", 
+    "message": "test asdoijasodijasoidjasodjas"
+}
