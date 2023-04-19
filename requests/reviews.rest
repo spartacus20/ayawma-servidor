@@ -1,4 +1,4 @@
-POST https://api.ayawma.com/rating
+POST http://localhost:3001/create-payment-intent
 content-type: application/json
 
 {

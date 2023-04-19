@@ -279,6 +279,40 @@ function getUser(request, response) {
 
 };
 
+function setOrder(req, res, order_id, products, payment_method) {
+
+  const QUERY = "INSERT INTO `orders`(`order_id`, `user_id`, `products`, `payment_method`) VALUES (?, ?, ?, ?)";
+
+  const user_id = getDecodedToken(req);
+  console.log("UserID: " + user_id.id)
+  console.log("products: ")
+  console.log("payment_method: " + payment_method)
+
+
+  conector.query(QUERY, [order_id, user_id.id, JSON.stringify(products), payment_method], (err) => {
+    if (err) console.log(err);
+    res.send({ msg: "Order has been created" })
+  })
+
+
+
+}
+
+
+
+function getOrdersbyUserID(res, userID) {
+
+  const QUERY = "SELECT * from orders WHERE userID = ?";
+  conector.query(QUERY, [userID], (err, rows) => {
+    if (err) console.log(err);
+    const data = JSON.parse(JSON.stringify(rows));
+    res.send({ data });
+  })
+
+
+}
+
+
 
 function addProduct(id, title, price, description, image, res) {
   const QUERY = "INSERT INTO products (id, title, price, description, images) VALUES (?, ?, ?, ?, ?)"
@@ -328,13 +362,13 @@ const getMostPopularProducts = (res) => {
 
     if (data.length > 0) {
       const QUERY2 = "SELECT * FROM products WHERE id IN (?, ?, ?, ?)";
-     
-    console.log(data[0].productID)
-    console.log(data[1].productID)
-    console.log(data[2].productID)
-    // res.status(201).send({ data })
-     conector.query(QUERY2, [data[0].productID, data[1].productID, data[2].productID, data[3].productID], (err, rows2) => {
-        if(err) console.error(err);
+
+      console.log(data[0].productID)
+      console.log(data[1].productID)
+      console.log(data[2].productID)
+      // res.status(201).send({ data })
+      conector.query(QUERY2, [data[0].productID, data[1].productID, data[2].productID, data[3].productID], (err, rows2) => {
+        if (err) console.error(err);
         const product = JSON.parse(JSON.stringify(rows2));
         console.log("product");
         res.status(201).send({ product, data })
@@ -361,7 +395,7 @@ const getLastProducts = (res) => {
   conector.query(QUERY, (err, rows) => {
     if (err) console.log(err)
     const products = JSON.parse(JSON.stringify(rows));
-    res.status(201).send({ products})
+    res.status(201).send({ products })
   })
 }
 
@@ -370,5 +404,5 @@ const getLastProducts = (res) => {
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers, getRamdomProducts, getMostPopularProducts, getLastProducts };
+module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers, getRamdomProducts, getMostPopularProducts, getLastProducts, setOrder, getOrdersbyUserID };
 

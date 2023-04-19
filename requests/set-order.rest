@@ -1,0 +1,15 @@
+POST http://localhost:3001/set-order
+content-type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjgxNDg0MDU4fQ.2XHGCnzz5EDJyUKnV6TetDX6if9a0XV3ObWgujfVTNA", 
+  "order_id": "pi_3MxEVNKO3d18apjL1RNXk1rH",
+  "basket": [
+    {
+      "id": "p1",
+    }, 
+    {
+      "id": "p2",
+    }
+  ]
+}
