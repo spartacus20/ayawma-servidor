@@ -1,9 +1,8 @@
 
 const express = require('express')
 require('dotenv').config();
-const nodemailer = require('nodemailer');
-const jwt = require("jsonwebtoken");
-const { getUser, getDecodedToken, conector } = require("../mysql_conector.js");
+const bcrypt = require("bcrypt");
+const { getUser, getDecodedToken, UpdatePassword } = require("../mysql_conector.js");
 
 const router = express.Router();
 
@@ -15,6 +14,21 @@ router.get('/api/user/id', (req, res) => {
     const decodedToken = getDecodedToken(req);
     res.send(decodedToken);
 })
+
+
+router.post('/api/user/change/general-settings', async (req, res) => {
+    const { email, name } = req.body;
+    UpdateEmail(res,req, name, email)
+})
+
+
+
+router.post('/api/user/change/password', async (req, res) => {
+    const { password } = req.body;
+    let passwordHashed = await bcrypt.hash(password, 10);
+    UpdatePassword(res, req, passwordHashed)
+})
+
 
 
 

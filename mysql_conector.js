@@ -312,6 +312,46 @@ function getOrdersbyUserID(res, userID) {
 
 }
 
+function UpdatePassword(req, res, passwordHashed) {
+  const QUERY = "UPDATE `users` SET password = ? WHERE id = ?";
+  const user_id = getDecodedToken(req)
+  conector.query(QUERY, [passwordHashed, user_id], (err) => {
+    if (err) throw err;
+    res.send({ msg: "Password has been changed" })
+  })
+}
+
+function UpdateEmail(res, req, name, email) {
+
+  const user_id = getDecodedToken(req)
+
+  if (name === undefined) {
+    const QUERY = "UPDATE `users` SET email = ? WHERE id = ?";
+    conector.query(QUERY, [email, user_id], (err) => {
+      if (err) throw err;
+      res.send({ msg: "Email has been changed" })
+    })
+  } else if (email === undefined) {
+    const QUERY = "UPDATE `users` SET name = ? WHERE id = ?";
+    conector.query(QUERY, [name, user_id], (err) => {
+      if (err) throw err;
+      res.send({ msg: "Name has been changed" })
+    })
+  } else {
+    const QUERY = "UPDATE `users` SET name = ? AND email = ? WHERE id = ?";
+    conector.query(QUERY, [name, email, user_id], (err) => {
+      if (err) throw err;
+      res.send({ msg: "Name and Email has been changed" })
+    })
+
+  }
+
+
+
+
+}
+
+
 
 
 function addProduct(id, title, price, description, image, res) {
@@ -375,17 +415,6 @@ const getMostPopularProducts = (res) => {
       })
 
     }
-
-
-
-
-
-
-
-
-
-
-
   }
   )
 }
@@ -404,5 +433,5 @@ const getLastProducts = (res) => {
 //const QUERY = "SELECT * FROM users where email="
 
 
-module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers, getRamdomProducts, getMostPopularProducts, getLastProducts, setOrder, getOrdersbyUserID };
+module.exports = { getProductByID, removeProduct, AdminLogin, LoginUser, getUser, RegisterUser, getDecodedToken, getProduct, getProductInformation, conector, addProduct, getAllProducts, getAllUsers, getRamdomProducts, getMostPopularProducts, getLastProducts, setOrder, getOrdersbyUserID, UpdatePassword, UpdateEmail };
 
