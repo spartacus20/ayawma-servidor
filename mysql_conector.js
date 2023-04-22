@@ -159,7 +159,6 @@ function getDecodedToken(req) {
     token = authorization.substring(7);
   }
   let decodeToken = {};
-
   decodeToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
   return decodeToken;
@@ -300,16 +299,17 @@ function setOrder(req, res, order_id, products, payment_method) {
 
 
 
-function getOrdersbyUserID(res, userID) {
+function getOrdersbyUserID(req) {
 
-  const QUERY = "SELECT * from orders WHERE userID = ?";
-  conector.query(QUERY, [userID], (err, rows) => {
+  const QUERY = "SELECT * from orders WHERE user_id = ?";
+  const user_id = getDecodedToken(req); 
+  conector.query(QUERY, [user_id.id], (err, rows) => {
     if (err) console.log(err);
     const data = JSON.parse(JSON.stringify(rows));
-    res.send({ data });
+    return data; 
   })
 
-
+ 
 }
 
 function UpdatePassword(req, res, passwordHashed) {

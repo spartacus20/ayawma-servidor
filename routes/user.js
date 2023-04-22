@@ -2,7 +2,7 @@
 const express = require('express')
 require('dotenv').config();
 const bcrypt = require("bcrypt");
-const { getUser, getDecodedToken, UpdatePassword } = require("../mysql_conector.js");
+const { getUser, getDecodedToken, UpdatePassword, getOrdersbyUserID } = require("../mysql_conector.js");
 
 const router = express.Router();
 
@@ -28,6 +28,9 @@ router.post('/api/user/change/password', async (req, res) => {
     let passwordHashed = await bcrypt.hash(password, 10);
     UpdatePassword(res, req, passwordHashed)
 })
+
+
+
 
 
 

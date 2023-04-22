@@ -1,6 +1,6 @@
 const express = require("express");
 require('dotenv').config();
-const { setOrder, getDecodedToken} = require("../mysql_conector")
+const { setOrder, getOrdersbyUserID, conector, getDecodedToken } = require("../mysql_conector")
 const router = express.Router();
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_API_KEY)
@@ -124,6 +124,31 @@ router.post("/set-order", async (req, res) => {
 
 });
 
+router.post('/api/user/get/orders', async (req, res) => {
+
+  const QUERY = "SELECT * from orders WHERE user_id = ?";
+  const user_id = getDecodedToken(req);
+  conector.query(QUERY, [user_id.id], async (err, rows) => {
+    if (err) console.log(err);
+    const data = JSON.parse(JSON.stringify(rows));
+
+    let order_information = []; 
+
+    await Promise.all(data.map(async (row) => {
+       order_id = row.order_id;
+      //  console.log(order_id)
+       const paymentIntent = await stripe.paymentIntents.retrieve(order_id)
+      //  console.log(paymentIntent.shipping); 
+      //  console.log(paymentIntent.amount / 100); 
+      //  console.log("\n"); 
+       order_information.push({ shipping: paymentIntent.shipping, total: paymentIntent.amount / 100});
+
+    }));
+
+    res.send({ data, order_information });
+  })
+
+})
 
 
 
