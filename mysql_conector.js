@@ -278,9 +278,9 @@ function getUser(request, response) {
 
 };
 
-function setOrder(req, res, order_id, products, payment_method) {
+function setOrder(req, res, order_id, products, shipping_address,payment_method) {
 
-  const QUERY = "INSERT INTO `orders`(`order_id`, `user_id`, `products`, `payment_method`) VALUES (?, ?, ?, ?)";
+  const QUERY = "INSERT INTO `orders`(`order_id`, `user_id`, `products`,`shipping_address`,  `payment_method`) VALUES (?, ?, ?, ?, ?)";
 
   const user_id = getDecodedToken(req);
   console.log("UserID: " + user_id.id)
@@ -288,7 +288,7 @@ function setOrder(req, res, order_id, products, payment_method) {
   console.log("payment_method: " + payment_method)
 
 
-  conector.query(QUERY, [order_id, user_id.id, JSON.stringify(products), payment_method], (err) => {
+  conector.query(QUERY, [order_id, user_id.id, JSON.stringify(products),  JSON.stringify(shipping_address) , payment_method], (err) => {
     if (err) console.log(err);
     res.send({ msg: "Order has been created" })
   })
@@ -302,14 +302,14 @@ function setOrder(req, res, order_id, products, payment_method) {
 function getOrdersbyUserID(req) {
 
   const QUERY = "SELECT * from orders WHERE user_id = ?";
-  const user_id = getDecodedToken(req); 
+  const user_id = getDecodedToken(req);
   conector.query(QUERY, [user_id.id], (err, rows) => {
     if (err) console.log(err);
     const data = JSON.parse(JSON.stringify(rows));
-    return data; 
+    return data;
   })
 
- 
+
 }
 
 function UpdatePassword(req, res, passwordHashed) {
@@ -327,19 +327,19 @@ function UpdateEmail(res, req, name, email) {
 
   if (name === undefined) {
     const QUERY = "UPDATE `users` SET email = ? WHERE id = ?";
-    conector.query(QUERY, [email, user_id], (err) => {
+    conector.query(QUERY, [email, user_id.id], (err) => {
       if (err) throw err;
       res.send({ msg: "Email has been changed" })
     })
   } else if (email === undefined) {
     const QUERY = "UPDATE `users` SET name = ? WHERE id = ?";
-    conector.query(QUERY, [name, user_id], (err) => {
+    conector.query(QUERY, [name, user_id.id], (err) => {
       if (err) throw err;
       res.send({ msg: "Name has been changed" })
     })
   } else {
-    const QUERY = "UPDATE `users` SET name = ? AND email = ? WHERE id = ?";
-    conector.query(QUERY, [name, email, user_id], (err) => {
+    const QUERY = "UPDATE `users` SET name = ?, email = ? WHERE id = ?";
+    conector.query(QUERY, [name, email, user_id.id], (err) => {
       if (err) throw err;
       res.send({ msg: "Name and Email has been changed" })
     })

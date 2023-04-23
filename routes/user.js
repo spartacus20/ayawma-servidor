@@ -2,7 +2,7 @@
 const express = require('express')
 require('dotenv').config();
 const bcrypt = require("bcrypt");
-const { getUser, getDecodedToken, UpdatePassword, getOrdersbyUserID } = require("../mysql_conector.js");
+const { getUser, getDecodedToken, UpdatePassword, getOrdersbyUserID, UpdateEmail } = require("../mysql_conector.js");
 
 const router = express.Router();
 

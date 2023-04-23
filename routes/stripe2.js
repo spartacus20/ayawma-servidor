@@ -101,10 +101,10 @@ router.post("/set-order", async (req, res) => {
 
 
     const method = paymentMethod.type
-    const address = paymentIntent.shipping.address
+    const address = paymentIntent.shipping
     console.log(address)
 
-    setOrder(req, res, order_id, basket, method)
+    setOrder(req, res, order_id, basket, address,method)
 
     const invoice = await stripe.invoices.create({
       customer: paymentIntent.customer,
@@ -126,7 +126,7 @@ router.post("/set-order", async (req, res) => {
 
 router.post('/api/user/get/orders', async (req, res) => {
 
-  const QUERY = "SELECT * from orders WHERE user_id = ?";
+  const QUERY = "SELECT * from orders WHERE user_id = ? ORDER BY order_id ASC";
   const user_id = getDecodedToken(req);
   conector.query(QUERY, [user_id.id], async (err, rows) => {
     if (err) console.log(err);
@@ -136,19 +136,16 @@ router.post('/api/user/get/orders', async (req, res) => {
 
     await Promise.all(data.map(async (row) => {
        order_id = row.order_id;
-      //  console.log(order_id)
        const paymentIntent = await stripe.paymentIntents.retrieve(order_id)
-      //  console.log(paymentIntent.shipping); 
-      //  console.log(paymentIntent.amount / 100); 
-      //  console.log("\n"); 
-       order_information.push({ shipping: paymentIntent.shipping, total: paymentIntent.amount / 100});
+       order_information.push({ order_id: paymentIntent.id, shipping: paymentIntent.shipping, total: paymentIntent.amount / 100});
 
     }));
 
-    res.send({ data, order_information });
+    res.send({ data, order_information});
   })
 
 })
+
 
 
 
