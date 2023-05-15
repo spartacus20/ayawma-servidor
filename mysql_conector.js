@@ -104,7 +104,7 @@ function LoginUser(email, password, res, name) {
           if (error) throw error;
           res.status(200).send({
             message: "Success",
-            username: userName,
+            username: name,
             email: email,
             accessToken: accessToken,
             refreshToken: refreshToken,
