@@ -85,13 +85,32 @@ function LoginUser(email, password, res, name) {
 
       } else {
 
-        const UserRegisterToken = {
-          id: data[0].id,
-        }
+     
+
         // WHEN THE USER DONT HAVE ACCOUNT AND  USE GOOGLE AUTENTIFICATION
-        accessToken = jwt.sign(UserRegisterToken, process.env.ACCESS_TOKEN_SECRET);
-        refreshToken = jwt.sign(UserRegisterToken, process.env.REFRESH_TOKEN_SECRET)
-        RegisterUser(name, email, "NULL", res, accessToken, refreshToken)
+        var QUERY = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+        conector.query(QUERY, [userName, email, "NULL"], (error, row) => {
+          //Create de Access Token and send it to the user
+          console.log("Valor de row: " + row);
+          const userForToken = {
+            id: row.insertId
+          };
+    
+          console.log(row.insertId);
+    
+          const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_SECRET);
+          const refreshToken = jwt.sign(userForToken, process.env.REFRESH_TOKEN_SECRET);
+    
+          if (error) throw error;
+          res.status(200).send({
+            message: "Success",
+            username: userName,
+            email: email,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+    
+          });
+        });
       }
 
     } else {
@@ -107,6 +126,7 @@ function LoginUser(email, password, res, name) {
         let passwordHash = data[0].password
 
         const isMatch = await bcrypt.compare(password, passwordHash)
+
         if (!isMatch) {
           res.status(401).send({ msg: "Email or password invalid" })
         } else {
