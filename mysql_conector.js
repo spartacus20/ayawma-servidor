@@ -89,7 +89,7 @@ function LoginUser(email, password, res, name) {
 
         // WHEN THE USER DONT HAVE ACCOUNT AND  USE GOOGLE AUTENTIFICATION
         var QUERY = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-        conector.query(QUERY, [userName, email, "NULL"], (error, row) => {
+        conector.query(QUERY, [name, email, "NULL"], (error, row) => {
           //Create de Access Token and send it to the user
           console.log("Valor de row: " + row);
           const userForToken = {
