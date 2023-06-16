@@ -23,7 +23,7 @@ const resetpassword = require("./routes/resetpassword.js")
 const admin = require("./routes/admin.js")
 const products = require("./routes/products.js")
 const contact = require("./routes/contact.js")
-
+const formulario = require("./routes/estagio/formulario.js")
 // const product = require("./routes/product.js"); 
 
 
@@ -58,7 +58,7 @@ app.use("/", order);
 app.use("/", admin);
 app.use("/", products);
 app.use("/", contact);
-
+app.use("/", formulario);
 // app.use("/", product);
 
 
@@ -118,9 +118,9 @@ app.get("/images/:img", (req, res) => {
 });
 
 /* A middleware that is handling the errors. */
-app.use((err, req, res, next) => {
-  handleError(err, req, res, next);
-});
+// app.use((err, req, res, next) => {
+//   handleError(err, req, res, next);
+// });
 
 app.use((req, res, next) => { databaseMiddleware });
 
