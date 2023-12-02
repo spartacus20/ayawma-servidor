@@ -72,7 +72,7 @@ function LoginUser(email, password, res, name) {
     //console.log(rows.length)
     //WHEN THE USER USE GOOGLE AUTENTIFICATION
     if (password == undefined) {
-      //WHEN THE USER USE GOOGLE AUTENTIFICATION AND HAVE AN ACCOUNT.       
+      //WHEN THE USER USE GOOGLE AUTENTIFICATION AND HAVE AN ACCOUNT.
       if (rows.length > 0) {
 
         const Tokeninfo = {
@@ -85,7 +85,7 @@ function LoginUser(email, password, res, name) {
 
       } else {
 
-     
+
 
         // WHEN THE USER DONT HAVE ACCOUNT AND  USE GOOGLE AUTENTIFICATION
         var QUERY = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
@@ -95,12 +95,12 @@ function LoginUser(email, password, res, name) {
           const userForToken = {
             id: row.insertId
           };
-    
+
           console.log(row.insertId);
-    
+
           const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_SECRET);
           const refreshToken = jwt.sign(userForToken, process.env.REFRESH_TOKEN_SECRET);
-    
+
           if (error) throw error;
           res.status(200).send({
             message: "Success",
@@ -108,7 +108,7 @@ function LoginUser(email, password, res, name) {
             email: email,
             accessToken: accessToken,
             refreshToken: refreshToken,
-    
+
           });
         });
       }
@@ -116,7 +116,7 @@ function LoginUser(email, password, res, name) {
     } else {
 
       console.log(data)
-      //EVERYTHIN IS OK. 
+      //EVERYTHIN IS OK.
       if (rows.length > 0) {
         const Tokeninfo = {
           id: data[0].id,
@@ -300,15 +300,18 @@ function getUser(request, response) {
 
 function setOrder(req, res, order_id, products, shipping_address,payment_method) {
 
-  const QUERY = "INSERT INTO `orders`(`order_id`, `user_id`, `products`,`shipping_address`,  `payment_method`) VALUES (?, ?, ?, ?, ?)";
+  const QUERY = "INSERT INTO `orders`(`order_id`, `user_id`, `products`,`shipping_address`,  `payment_method`, `order_date`) VALUES (?, ?, ?, ?, ?, ?)";
 
   const user_id = getDecodedToken(req);
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleString('en-US', { timeZone: 'UTC' }).replace(',', '');
+
   console.log("UserID: " + user_id.id)
   console.log("products: ")
   console.log("payment_method: " + payment_method)
+  console.log("order_date: " + Date.now())
 
-
-  conector.query(QUERY, [order_id, user_id.id, JSON.stringify(products),  JSON.stringify(shipping_address) , payment_method], (err) => {
+  conector.query(QUERY, [order_id, user_id.id, JSON.stringify(products),  JSON.stringify(shipping_address) , payment_method, formattedDate], (err) => {
     if (err) console.log(err);
     res.send({ msg: "Order has been created" })
   })
